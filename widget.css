@@ -1,16 +1,621 @@
-:root{--xavia-primary:#E8622C;--xavia-secondary:#D4AF37;--xavia-bg:#161C2C;--xavia-panel:#1B2234;--xavia-text:#fff;--xavia-muted:#B8C0CC;--xavia-border:#2B344A;--xavia-shadow:0 24px 70px #0008}
-#xavia-widget,#xavia-widget *{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
-#xavia-launcher{position:fixed;right:24px;bottom:24px;width:64px;height:64px;border:0;border-radius:50%;background:linear-gradient(135deg,var(--xavia-primary),var(--xavia-secondary));color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:var(--xavia-shadow);z-index:99999;font-size:27px;transition:.2s}
-#xavia-launcher:hover{transform:translateY(-3px) scale(1.04)}
-#xavia-chat{position:fixed;right:24px;bottom:100px;width:390px;height:min(650px,calc(100vh - 125px));background:var(--xavia-bg);color:var(--xavia-text);border:1px solid var(--xavia-border);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--xavia-shadow);transform:translateY(16px) scale(.98);opacity:0;pointer-events:none;transition:.22s;z-index:99998}
-#xavia-chat.open{opacity:1;transform:none;pointer-events:auto}
-#xavia-header{display:flex;align-items:center;gap:12px;padding:16px;background:#101624;border-bottom:1px solid var(--xavia-border)}
-#xavia-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--xavia-primary),var(--xavia-secondary));display:grid;place-items:center;font-weight:900}
-.xavia-head-copy{min-width:0;flex:1}#xavia-business{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#xavia-status{font-size:11px;color:var(--xavia-muted);margin-top:3px}#xavia-status span{color:#5edc88}#xavia-close{border:0;background:none;color:#aab4c5;font-size:28px;cursor:pointer}
-#xavia-messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:13px;background:linear-gradient(180deg,var(--xavia-panel),#151c2b)}
-.xavia-message{display:flex;flex-direction:column;max-width:88%}.xavia-message.user{align-self:flex-end;align-items:flex-end}.xavia-message.bot{align-self:flex-start;align-items:flex-start}.bubble{padding:12px 15px;border-radius:17px;line-height:1.52;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.user .bubble{background:var(--xavia-primary);border-bottom-right-radius:5px}.bot .bubble{background:#293348;border-bottom-left-radius:5px}.time{font-size:10px;color:var(--xavia-muted);margin-top:4px;padding:0 5px}
-.typing{display:flex;gap:5px;align-items:center}.typing span{width:7px;height:7px;border-radius:50%;background:#d7dbe2;animation:xaviaTyping 1.1s infinite}.typing span:nth-child(2){animation-delay:.18s}.typing span:nth-child(3){animation-delay:.36s}@keyframes xaviaTyping{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
-#xavia-input-area{display:flex;gap:9px;padding:12px;background:#101624;border-top:1px solid var(--xavia-border)}#xavia-input{flex:1;border:1px solid var(--xavia-border);outline:0;resize:none;border-radius:13px;padding:12px 13px;background:#1e273a;color:#fff;min-height:46px;max-height:120px;font-size:14px}#xavia-input:focus{border-color:var(--xavia-primary)}#xavia-send{width:46px;height:46px;border:0;border-radius:13px;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--xavia-primary),var(--xavia-secondary));font-size:17px}#xavia-send:disabled{opacity:.55}.xavia-powered{text-align:center;font-size:10px;color:#687389;background:#101624;padding:7px}
-#xavia-messages::-webkit-scrollbar{width:6px}#xavia-messages::-webkit-scrollbar-thumb{background:#3b4558;border-radius:20px}
-@media(max-width:600px){#xavia-chat{right:0;bottom:0;width:100vw;height:100dvh;border-radius:0}#xavia-launcher{right:18px;bottom:18px}}
-@media(prefers-reduced-motion:reduce){#xavia-launcher,#xavia-chat,.typing span{animation:none!important;transition:none!important}}
+/* ==========================================================
+   XAVIA AI WIDGET
+   Production Chat UI
+   ========================================================== */
+
+:root {
+    --xavia-primary: #E8622C;
+    --xavia-secondary: #D4AF37;
+
+    --xavia-bg: #161C2C;
+    --xavia-panel: #1B2234;
+    --xavia-header: #101624;
+    --xavia-input: #202A3F;
+    --xavia-bot: #2A3247;
+
+    --xavia-text: #FFFFFF;
+    --xavia-muted: #AEB8C8;
+    --xavia-border: #2B344A;
+
+    --xavia-success: #5EDC88;
+
+    --xavia-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.45);
+
+    --xavia-radius: 20px;
+}
+
+
+/* ==========================================================
+   WIDGET RESET
+   ========================================================== */
+
+#xavia-widget,
+#xavia-widget * {
+    box-sizing: border-box;
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+/* ==========================================================
+   LAUNCHER
+   ========================================================== */
+
+#xavia-launcher {
+    position: fixed;
+
+    right: 24px;
+    bottom: 24px;
+
+    width: 64px;
+    height: 64px;
+
+    border: none;
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--xavia-primary),
+            var(--xavia-secondary)
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    color: #ffffff;
+    font-size: 28px;
+
+    box-shadow: var(--xavia-shadow);
+
+    z-index: 2147483646;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+#xavia-launcher:hover {
+    transform: scale(1.07);
+}
+
+#xavia-launcher:active {
+    transform: scale(0.95);
+}
+
+
+/* ==========================================================
+   CHAT WINDOW
+   ========================================================== */
+
+#xavia-chat {
+    position: fixed;
+
+    right: 24px;
+    bottom: 100px;
+
+    width: 410px;
+    height: 680px;
+
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 120px);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: var(--xavia-bg);
+    color: var(--xavia-text);
+
+    border:
+        1px solid var(--xavia-border);
+
+    border-radius: var(--xavia-radius);
+
+    box-shadow: var(--xavia-shadow);
+
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.22s ease,
+        transform 0.22s ease;
+
+    z-index: 2147483645;
+}
+
+
+/* Open state */
+
+#xavia-chat.open {
+    opacity: 1;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+    pointer-events: auto;
+}
+
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+#xavia-header {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 16px 18px;
+
+    min-height: 76px;
+
+    background: var(--xavia-header);
+
+    border-bottom:
+        1px solid var(--xavia-border);
+}
+
+
+/* Avatar */
+
+#xavia-avatar {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--xavia-primary),
+            var(--xavia-secondary)
+        );
+
+    color: #ffffff;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+
+/* Business name */
+
+#xavia-business {
+    font-size: 15px;
+    font-weight: 750;
+
+    line-height: 1.3;
+
+    color: #ffffff;
+}
+
+
+/* Status */
+
+#xavia-status {
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    color: var(--xavia-success);
+}
+
+
+/* ==========================================================
+   MESSAGE AREA
+   ========================================================== */
+
+#xavia-messages {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 20px 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--xavia-panel),
+            var(--xavia-bg)
+        );
+
+    scroll-behavior: smooth;
+
+    overscroll-behavior: contain;
+}
+
+
+/* Scrollbar */
+
+#xavia-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#xavia-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#xavia-messages::-webkit-scrollbar-thumb {
+    background: #465066;
+    border-radius: 20px;
+}
+
+#xavia-messages {
+    scrollbar-width: thin;
+    scrollbar-color: #465066 transparent;
+}
+
+
+/* ==========================================================
+   MESSAGE
+   ========================================================== */
+
+.xavia-message {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+}
+
+.xavia-message.user {
+    align-items: flex-end;
+}
+
+.xavia-message.bot {
+    align-items: flex-start;
+}
+
+
+/* Bubble */
+
+.xavia-message .bubble {
+    max-width: 84%;
+
+    padding: 11px 14px;
+
+    border-radius: 17px;
+
+    font-size: 14px;
+
+    line-height: 1.55;
+
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+
+    white-space: pre-wrap;
+}
+
+
+/* User */
+
+.xavia-message.user .bubble {
+    background:
+        linear-gradient(
+            135deg,
+            var(--xavia-primary),
+            #d95323
+        );
+
+    color: #ffffff;
+
+    border-bottom-right-radius: 5px;
+}
+
+
+/* Bot */
+
+.xavia-message.bot .bubble {
+    background: var(--xavia-bot);
+
+    color: #ffffff;
+
+    border-bottom-left-radius: 5px;
+}
+
+
+/* Timestamp */
+
+.xavia-message .time {
+    margin-top: 4px;
+
+    padding: 0 5px;
+
+    font-size: 10px;
+
+    color: var(--xavia-muted);
+}
+
+
+/* ==========================================================
+   TYPING INDICATOR
+   ========================================================== */
+
+.xavia-typing-bubble {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 12px 15px;
+
+    background: var(--xavia-bot);
+
+    border-radius: 17px;
+
+    border-bottom-left-radius: 5px;
+}
+
+.xavia-typing-bubble span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #d8dce4;
+
+    animation:
+        xaviaTyping 1.2s infinite ease-in-out;
+}
+
+.xavia-typing-bubble span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.xavia-typing-bubble span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes xaviaTyping {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.35;
+    }
+
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+
+/* ==========================================================
+   INPUT AREA
+   ========================================================== */
+
+#xavia-input-area {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: flex-end;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    background: var(--xavia-header);
+
+    border-top:
+        1px solid var(--xavia-border);
+}
+
+
+/* Input */
+
+#xavia-input {
+    flex: 1 1 auto;
+
+    width: 100%;
+
+    min-height: 48px;
+    max-height: 120px;
+
+    padding: 13px 14px;
+
+    resize: none;
+
+    border:
+        1px solid transparent;
+
+    border-radius: 14px;
+
+    outline: none;
+
+    background: var(--xavia-input);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+#xavia-input::placeholder {
+    color: #8d98ab;
+}
+
+#xavia-input:focus {
+    border-color: var(--xavia-primary);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(232, 98, 44, 0.12);
+}
+
+
+/* Send */
+
+#xavia-send {
+    flex: 0 0 48px;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--xavia-primary),
+            var(--xavia-secondary)
+        );
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+#xavia-send:hover {
+    transform: translateY(-1px);
+}
+
+#xavia-send:active {
+    transform: scale(0.95);
+}
+
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+#xavia-footer {
+    flex: 0 0 auto;
+
+    padding:
+        7px
+        10px
+        9px;
+
+    text-align: center;
+
+    background: var(--xavia-header);
+
+    color: #72809a;
+
+    font-size: 10px;
+}
+
+#xavia-footer strong {
+    color: #8c9ab2;
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+    #xavia-launcher {
+        right: 18px;
+        bottom: 18px;
+
+        width: 58px;
+        height: 58px;
+    }
+
+    #xavia-chat {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        width: 100vw;
+        height: 100dvh;
+
+        max-width: none;
+        max-height: none;
+
+        border-radius: 0;
+
+        border: none;
+    }
+
+    #xavia-header {
+        padding:
+            14px 16px;
+
+        min-height: 70px;
+    }
+
+    #xavia-messages {
+        padding: 16px 12px;
+    }
+
+    .xavia-message .bubble {
+        max-width: 88%;
+    }
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #xavia-chat,
+    #xavia-launcher,
+    #xavia-send,
+    #xavia-input {
+        transition: none;
+    }
+
+    #xavia-messages {
+        scroll-behavior: auto;
+    }
+
+    .xavia-typing-bubble span {
+        animation: none;
+    }
+}
