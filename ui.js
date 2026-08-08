@@ -2,22 +2,8 @@
  * ============================================================
  * Xavia Widget UI
  * ============================================================
- *
- * Responsible ONLY for rendering and controlling the interface.
+ * Responsible ONLY for rendering the widget interface.
  * No backend/API calls belong here.
- *
- * Features:
- * - Responsive desktop/mobile layout
- * - Proper chat header
- * - Close button
- * - Scrollable conversation area
- * - Fixed input area
- * - Proper "Powered by Konnex AI" footer
- * - Typing indicator
- * - Send button state
- * - Mobile keyboard friendly input
- * - Safe message rendering
- *
  * ============================================================
  */
 
@@ -33,18 +19,14 @@ export class XaviaUI {
 
     }
 
+
     /**
      * ========================================================
-     * BUILD WIDGET
+     * BUILD
      * ========================================================
      */
 
     build() {
-
-        /*
-         * Prevent duplicate widgets if the loader is
-         * accidentally included more than once.
-         */
 
         const existing =
             document.getElementById("xavia-widget");
@@ -55,45 +37,35 @@ export class XaviaUI {
 
         }
 
-        /*
-         * Main widget container
-         */
 
         const root =
             document.createElement("div");
 
         root.id = "xavia-widget";
 
+
         root.innerHTML = `
 
-            <!-- ==================================================
-                 Floating Launcher
-                 ================================================== -->
+            <!-- Floating Launcher -->
 
             <button
                 id="xavia-launcher"
                 type="button"
                 aria-label="Open Xavia chat"
-                title="Chat with Xavia"
             >
-                <span aria-hidden="true">💬</span>
+                💬
             </button>
 
 
-            <!-- ==================================================
-                 Chat Window
-                 ================================================== -->
+            <!-- Chat Window -->
 
-            <section
+            <div
                 id="xavia-chat"
-                aria-label="Xavia customer assistant"
                 aria-hidden="true"
             >
 
 
-                <!-- ==============================================
-                     Header
-                     ============================================== -->
+                <!-- Header -->
 
                 <div id="xavia-header">
 
@@ -107,26 +79,19 @@ export class XaviaUI {
                     </div>
 
 
-                    <div
-                        id="xavia-business-info"
-                    >
+                    <div id="xavia-business-info">
 
                         <div id="xavia-business">
-
                             ${this.escapeHTML(
                                 this.config.businessName ||
                                 "Xavia AI"
                             )}
-
                         </div>
 
 
                         <div id="xavia-status">
 
-                            <span
-                                id="xavia-status-dot"
-                                aria-hidden="true"
-                            >
+                            <span id="xavia-status-dot">
                                 ●
                             </span>
 
@@ -137,39 +102,29 @@ export class XaviaUI {
                     </div>
 
 
-                    <!-- Close Button -->
-
                     <button
                         id="xavia-close"
                         type="button"
                         aria-label="Close chat"
-                        title="Close chat"
                     >
-                        <span aria-hidden="true">×</span>
+                        ×
                     </button>
 
                 </div>
 
 
-                <!-- ==============================================
-                     Messages
-                     ============================================== -->
+                <!-- Messages -->
 
                 <div
                     id="xavia-messages"
                     role="log"
                     aria-live="polite"
-                    aria-label="Conversation"
-                >
-                </div>
+                ></div>
 
 
-                <!-- ==============================================
-                     Input Area
-                     ============================================== -->
+                <!-- Input -->
 
                 <div id="xavia-input-area">
-
 
                     <textarea
                         id="xavia-input"
@@ -184,13 +139,9 @@ export class XaviaUI {
                         id="xavia-send"
                         type="button"
                         aria-label="Send message"
-                        title="Send message"
                     >
 
-                        <span
-                            id="xavia-send-icon"
-                            aria-hidden="true"
-                        >
+                        <span id="xavia-send-icon">
                             ➤
                         </span>
 
@@ -199,33 +150,25 @@ export class XaviaUI {
                 </div>
 
 
-                <!-- ==============================================
-                     Powered By Footer
-                     ============================================== -->
+                <!-- Footer -->
 
                 <div id="xavia-powered-by">
 
-                    <span>
-                        Powered by
-                        <strong>Konnex AI</strong>
-                    </span>
+                    Powered by
+                    <strong>Konnex AI</strong>
 
                 </div>
 
 
-            </section>
+            </div>
         `;
 
-
-        /*
-         * Add widget to page
-         */
 
         document.body.appendChild(root);
 
 
         /*
-         * Cache DOM elements
+         * Cache elements
          */
 
         this.elements = {
@@ -275,29 +218,10 @@ export class XaviaUI {
             avatar:
                 root.querySelector(
                     "#xavia-avatar"
-                ),
-
-            status:
-                root.querySelector(
-                    "#xavia-status"
                 )
 
         };
 
-
-        /*
-         * Initial state
-         */
-
-        this.elements.chat.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-
-        /*
-         * Auto resize input when first created
-         */
 
         this.resizeInput();
 
@@ -306,28 +230,17 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * TOGGLE CHAT
+     * TOGGLE
      * ========================================================
      */
 
     toggle() {
 
         if (
-            !this.elements.chat ||
-            !this.elements.launcher
-        ) {
-
-            return;
-
-        }
-
-        const isOpen =
             this.elements.chat.classList.contains(
                 "open"
-            );
-
-
-        if (isOpen) {
+            )
+        ) {
 
             this.close();
 
@@ -342,7 +255,7 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * OPEN CHAT
+     * OPEN
      * ========================================================
      */
 
@@ -357,18 +270,15 @@ export class XaviaUI {
             "false"
         );
 
+
         this.elements.launcher.setAttribute(
             "aria-label",
             "Close Xavia chat"
         );
 
 
-        /*
-         * Focus input after opening.
-         *
-         * Small delay allows the opening animation
-         * to complete properly on mobile browsers.
-         */
+        this.scrollBottom();
+
 
         setTimeout(() => {
 
@@ -378,17 +288,14 @@ export class XaviaUI {
 
             }
 
-        }, 250);
-
-
-        this.scrollBottom();
+        }, 200);
 
     }
 
 
     /**
      * ========================================================
-     * CLOSE CHAT
+     * CLOSE
      * ========================================================
      */
 
@@ -403,6 +310,7 @@ export class XaviaUI {
             "true"
         );
 
+
         this.elements.launcher.setAttribute(
             "aria-label",
             "Open Xavia chat"
@@ -413,7 +321,7 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * UPDATE BUSINESS INFORMATION
+     * BUSINESS INFORMATION
      * ========================================================
      */
 
@@ -438,34 +346,19 @@ export class XaviaUI {
             this.config.avatar ||
             "X";
 
-
-        /*
-         * Update browser accessibility information.
-         */
-
-        this.elements.chat.setAttribute(
-            "aria-label",
-            `${data.businessName || data.name || "Business"} customer assistant`
-        );
-
     }
 
 
     /**
      * ========================================================
-     * CHECK WHETHER MESSAGES EXIST
+     * CHECK MESSAGES
      * ========================================================
      */
 
     hasMessages() {
 
-        if (!this.elements.messages) {
-
-            return false;
-
-        }
-
         return (
+            this.elements.messages &&
             this.elements.messages.children.length > 0
         );
 
@@ -487,18 +380,6 @@ export class XaviaUI {
         }
 
 
-        /*
-         * Remove typing indicator before adding
-         * an actual bot response.
-         */
-
-        if (role === "bot") {
-
-            this.hideTyping();
-
-        }
-
-
         const wrapper =
             document.createElement("div");
 
@@ -506,10 +387,6 @@ export class XaviaUI {
         wrapper.className =
             `xavia-message ${role}`;
 
-
-        /*
-         * Message bubble
-         */
 
         const bubble =
             document.createElement("div");
@@ -520,13 +397,7 @@ export class XaviaUI {
 
 
         /*
-         * IMPORTANT:
-         *
-         * Use textContent rather than innerHTML.
-         *
-         * This prevents a customer message containing
-         * HTML/JavaScript from being injected into
-         * the page.
+         * textContent prevents HTML injection.
          */
 
         bubble.textContent =
@@ -534,10 +405,6 @@ export class XaviaUI {
                 ? ""
                 : String(text);
 
-
-        /*
-         * Timestamp
-         */
 
         const time =
             document.createElement("div");
@@ -550,10 +417,6 @@ export class XaviaUI {
         time.textContent =
             formatTime();
 
-
-        /*
-         * Assemble message
-         */
 
         wrapper.appendChild(
             bubble
@@ -569,10 +432,6 @@ export class XaviaUI {
         );
 
 
-        /*
-         * Scroll to latest message
-         */
-
         this.scrollBottom();
 
     }
@@ -585,10 +444,6 @@ export class XaviaUI {
      */
 
     showTyping() {
-
-        /*
-         * Prevent duplicates
-         */
 
         if (
             document.getElementById(
@@ -605,12 +460,12 @@ export class XaviaUI {
             document.createElement("div");
 
 
-        typing.className =
-            "xavia-message bot";
-
-
         typing.id =
             "xavia-typing";
+
+
+        typing.className =
+            "xavia-message bot";
 
 
         typing.innerHTML = `
@@ -642,7 +497,7 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * HIDE TYPING INDICATOR
+     * HIDE TYPING
      * ========================================================
      */
 
@@ -665,7 +520,7 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * SHOW ERROR
+     * ERROR
      * ========================================================
      */
 
@@ -675,11 +530,8 @@ export class XaviaUI {
 
 
         this.addMessage(
-
             "bot",
-
             `⚠️ ${message}`
-
         );
 
     }
@@ -693,15 +545,7 @@ export class XaviaUI {
 
     clearInput() {
 
-        if (!this.elements.input) {
-
-            return;
-
-        }
-
-
         this.elements.input.value = "";
-
 
         this.resizeInput();
 
@@ -710,11 +554,8 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * RESIZE TEXTAREA
+     * RESIZE INPUT
      * ========================================================
-     *
-     * Allows the input box to grow when the customer
-     * writes a longer message.
      */
 
     resizeInput() {
@@ -730,11 +571,6 @@ export class XaviaUI {
         }
 
 
-        /*
-         * Reset height first so scrollHeight can
-         * calculate the correct value.
-         */
-
         input.style.height =
             "auto";
 
@@ -743,22 +579,18 @@ export class XaviaUI {
             120;
 
 
-        const newHeight =
-            Math.min(
+        input.style.height =
+            `${Math.min(
                 input.scrollHeight,
                 maxHeight
-            );
-
-
-        input.style.height =
-            `${newHeight}px`;
+            )}px`;
 
     }
 
 
     /**
      * ========================================================
-     * SET SENDING STATE
+     * SENDING STATE
      * ========================================================
      */
 
@@ -778,16 +610,12 @@ export class XaviaUI {
             isSending;
 
 
-        /*
-         * Prevent typing another message while
-         * the current request is processing.
-         */
-
         if (isSending) {
 
             this.elements.send.classList.add(
                 "sending"
             );
+
 
             this.elements.send.setAttribute(
                 "aria-label",
@@ -807,6 +635,7 @@ export class XaviaUI {
             this.elements.send.classList.remove(
                 "sending"
             );
+
 
             this.elements.send.setAttribute(
                 "aria-label",
@@ -828,7 +657,7 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * SCROLL TO BOTTOM
+     * SCROLL
      * ========================================================
      */
 
@@ -840,11 +669,6 @@ export class XaviaUI {
 
         }
 
-
-        /*
-         * Use requestAnimationFrame so the browser
-         * finishes rendering the new message first.
-         */
 
         requestAnimationFrame(() => {
 
@@ -860,9 +684,6 @@ export class XaviaUI {
      * ========================================================
      * ESCAPE HTML
      * ========================================================
-     *
-     * Used for static configuration values inserted
-     * into the initial widget HTML.
      */
 
     escapeHTML(value) {
