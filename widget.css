@@ -1,20 +1,6 @@
 /* ==========================================================
-   XAVIA WIDGET v2
-   ==========================================================
-   Responsive, embeddable customer-support widget.
-
-   Designed to:
-   - Work safely on third-party websites
-   - Avoid inheriting host-page styles
-   - Stay compact on desktop
-   - Work properly on small phones
-   - Keep conversation area scrollable
-   - Keep footer / input properly aligned
-   ========================================================== */
-
-
-/* ==========================================================
-   THEME VARIABLES
+   XAVIA WIDGET v1
+   Stable Production Style
    ========================================================== */
 
 :root {
@@ -23,70 +9,38 @@
 
     --xavia-bg: #161C2C;
     --xavia-panel: #1B2234;
-    --xavia-header: #101725;
-    --xavia-input: #202A3F;
-    --xavia-bot: #2A344B;
 
     --xavia-text: #FFFFFF;
-    --xavia-muted: #AEB8CA;
+    --xavia-muted: #B8C0CC;
 
     --xavia-border: #2B344A;
 
-    --xavia-success: #5EDC88;
-
     --xavia-shadow:
-        0 20px 55px rgba(0, 0, 0, 0.38);
+        0 20px 50px rgba(0, 0, 0, .35);
 
     --xavia-radius: 18px;
-
-    --xavia-transition: 0.25s ease;
+    --xavia-transition: .25s ease;
 }
 
-
 /* ==========================================================
-   WIDGET ROOT
+   RESET
    ========================================================== */
 
 #xavia-widget,
 #xavia-widget * {
     box-sizing: border-box;
-
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
 }
 
-
-/*
-   Prevent host websites from affecting the widget.
-*/
+/* ==========================================================
+   WIDGET ROOT
+   ========================================================== */
 
 #xavia-widget {
-    all: initial;
-
-    position: fixed;
-
-    right: 0;
-    bottom: 0;
-
-    width: 0;
-    height: 0;
-
-    z-index: 2147483000;
-
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+    position: relative;
+    z-index: 99999;
 }
-
 
 /* ==========================================================
    LAUNCHER
@@ -94,55 +48,44 @@
 
 #xavia-launcher {
     position: fixed;
-
     right: 24px;
     bottom: 24px;
 
-    width: 62px;
-    height: 62px;
+    width: 64px;
+    height: 64px;
 
     border: none;
     border-radius: 50%;
 
-    background:
-        linear-gradient(
-            135deg,
-            var(--xavia-primary),
-            var(--xavia-secondary)
-        );
-
-    color: #ffffff;
+    background: linear-gradient(
+        135deg,
+        var(--xavia-primary),
+        var(--xavia-secondary)
+    );
 
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
     cursor: pointer;
 
-    font-size: 27px;
-    line-height: 1;
+    font-size: 28px;
+    color: #fff;
 
     box-shadow: var(--xavia-shadow);
 
-    z-index: 2147483001;
+    z-index: 99999;
 
-    transition:
-        transform var(--xavia-transition),
-        box-shadow var(--xavia-transition);
+    transition: var(--xavia-transition);
 }
 
 #xavia-launcher:hover {
-    transform: scale(1.07);
+    transform: scale(1.08);
 }
 
 #xavia-launcher:active {
-    transform: scale(0.94);
+    transform: scale(.95);
 }
-
-#xavia-launcher:focus {
-    outline: none;
-}
-
 
 /* ==========================================================
    CHAT WINDOW
@@ -152,20 +95,13 @@
     position: fixed;
 
     right: 24px;
-    bottom: 98px;
+    bottom: 100px;
 
-    width: 390px;
-    height: 570px;
-
-    max-width: calc(100vw - 32px);
-    max-height: calc(100vh - 120px);
+    width: 370px;
+    height: 600px;
 
     background: var(--xavia-bg);
-
     color: var(--xavia-text);
-
-    border:
-        1px solid var(--xavia-border);
 
     border-radius: 20px;
 
@@ -176,36 +112,22 @@
 
     box-shadow: var(--xavia-shadow);
 
+    transform: translateY(20px);
     opacity: 0;
-
-    transform:
-        translateY(18px)
-        scale(0.98);
-
     pointer-events: none;
 
-    visibility: hidden;
-
     transition:
-        opacity var(--xavia-transition),
-        transform var(--xavia-transition),
-        visibility var(--xavia-transition);
+        opacity .25s ease,
+        transform .25s ease;
 
-    z-index: 2147483000;
+    z-index: 99998;
 }
 
 #xavia-chat.open {
     opacity: 1;
-
-    transform:
-        translateY(0)
-        scale(1);
-
+    transform: translateY(0);
     pointer-events: auto;
-
-    visibility: visible;
 }
-
 
 /* ==========================================================
    HEADER
@@ -214,138 +136,97 @@
 #xavia-header {
     flex: 0 0 auto;
 
-    min-height: 82px;
-
     display: flex;
-
     align-items: center;
+    gap: 14px;
 
-    gap: 12px;
+    padding: 18px;
 
-    padding:
-        14px 16px;
+    background: #131826;
 
-    background: var(--xavia-header);
-
-    border-bottom:
-        1px solid var(--xavia-border);
+    border-bottom: 1px solid var(--xavia-border);
 }
 
-
-/* Avatar */
-
 #xavia-avatar {
-    flex: 0 0 48px;
+    width: 42px;
+    height: 42px;
 
-    width: 48px;
-    height: 48px;
+    flex: 0 0 42px;
 
     border-radius: 50%;
 
-    background:
-        linear-gradient(
-            135deg,
-            var(--xavia-primary),
-            var(--xavia-secondary)
-        );
+    background: linear-gradient(
+        135deg,
+        var(--xavia-primary),
+        var(--xavia-secondary)
+    );
 
     display: flex;
-
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
-    color: #ffffff;
+    color: #fff;
 
-    font-size: 20px;
     font-weight: 700;
-
-    line-height: 1;
-
-    overflow: hidden;
+    font-size: 18px;
 }
 
-
-/* Business information */
-
 #xavia-business {
-    flex: 1;
-
-    min-width: 0;
-
-    color: #ffffff;
-
-    font-size: 16px;
-
     font-weight: 700;
+    font-size: 15px;
 
-    line-height: 1.3;
+    color: #fff;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
-
-/* Online status */
-
 #xavia-status {
-    margin-top: 4px;
-
-    color: var(--xavia-success);
-
+    color: #5EDC88;
     font-size: 12px;
 
-    line-height: 1.2;
+    margin-top: 2px;
 }
 
-
-/* Close button */
+/* ==========================================================
+   CLOSE BUTTON
+   ========================================================== */
 
 #xavia-close {
-    flex: 0 0 auto;
+    margin-left: auto;
 
     width: 34px;
     height: 34px;
 
+    flex: 0 0 34px;
+
     border: none;
+    border-radius: 50%;
 
     background: transparent;
 
-    color: #B9C1CF;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
+    color: #B8C0CC;
 
     cursor: pointer;
 
-    font-size: 24px;
-
+    font-size: 20px;
     line-height: 1;
 
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    transition:
-        background var(--xavia-transition),
-        color var(--xavia-transition);
+    transition: var(--xavia-transition);
 }
 
 #xavia-close:hover {
-    background: rgba(255, 255, 255, 0.08);
-
-    color: #ffffff;
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
 }
-
-#xavia-close:focus {
-    outline: none;
-}
-
 
 /* ==========================================================
-   MESSAGE AREA
+   MESSAGES
    ========================================================== */
 
 #xavia-messages {
@@ -353,40 +234,29 @@
 
     min-height: 0;
 
-    width: 100%;
-
     overflow-y: auto;
-    overflow-x: hidden;
 
-    padding:
-        18px 16px;
+    padding: 18px;
 
     display: flex;
-
     flex-direction: column;
 
-    gap: 12px;
+    gap: 14px;
 
     background: var(--xavia-panel);
 
     scroll-behavior: smooth;
-
-    overscroll-behavior: contain;
 }
-
 
 /* ==========================================================
    MESSAGE
    ========================================================== */
 
 .xavia-message {
-    width: 100%;
-
     display: flex;
-
     flex-direction: column;
 
-    flex-shrink: 0;
+    max-width: 100%;
 }
 
 .xavia-message.user {
@@ -397,83 +267,52 @@
     align-items: flex-start;
 }
 
+.bubble {
+    max-width: 85%;
 
-/* ==========================================================
-   MESSAGE BUBBLE
-   ========================================================== */
+    padding: 12px 16px;
 
-.xavia-message .bubble {
-    max-width: 84%;
-
-    padding:
-        11px 14px;
-
-    border-radius: 17px;
-
-    font-size: 15px;
+    border-radius: 18px;
 
     line-height: 1.5;
 
-    word-wrap: break-word;
-
+    word-break: break-word;
     overflow-wrap: anywhere;
 
-    white-space: pre-wrap;
+    font-size: 14px;
 }
 
-
-/* User */
-
-.xavia-message.user .bubble {
+.user .bubble {
     background: var(--xavia-primary);
+    color: #fff;
 
-    color: #ffffff;
-
-    border-bottom-right-radius: 5px;
+    border-bottom-right-radius: 6px;
 }
 
+.bot .bubble {
+    background: #2A3247;
+    color: #fff;
 
-/* Bot */
-
-.xavia-message.bot .bubble {
-    background: var(--xavia-bot);
-
-    color: #ffffff;
-
-    border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 6px;
 }
-
 
 /* ==========================================================
    TIME
    ========================================================== */
 
-.xavia-message .time {
-    margin-top: 4px;
-
-    padding:
-        0 6px;
+.time {
+    font-size: 11px;
 
     color: var(--xavia-muted);
 
-    font-size: 10px;
+    margin-top: 4px;
 
-    line-height: 1.2;
+    padding: 0 6px;
 }
-
 
 /* ==========================================================
    TYPING INDICATOR
    ========================================================== */
-
-#xavia-typing {
-    width: auto;
-}
-
-#xavia-typing .bubble {
-    padding:
-        12px 15px;
-}
 
 .typing {
     display: flex;
@@ -484,31 +323,29 @@
 }
 
 .typing span {
-    display: block;
-
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
 
     border-radius: 50%;
 
-    background: #D4D8E0;
+    background: #CFCFCF;
 
-    animation:
-        xaviaTyping 1.2s infinite ease-in-out;
+    animation: xaviaTyping 1.2s infinite;
 }
 
 .typing span:nth-child(2) {
-    animation-delay: 0.2s;
+    animation-delay: .2s;
 }
 
 .typing span:nth-child(3) {
-    animation-delay: 0.4s;
+    animation-delay: .4s;
 }
 
 @keyframes xaviaTyping {
+
     0% {
         transform: translateY(0);
-        opacity: 0.35;
+        opacity: .4;
     }
 
     50% {
@@ -518,10 +355,9 @@
 
     100% {
         transform: translateY(0);
-        opacity: 0.35;
+        opacity: .4;
     }
 }
-
 
 /* ==========================================================
    INPUT AREA
@@ -530,454 +366,253 @@
 #xavia-input-area {
     flex: 0 0 auto;
 
-    width: 100%;
-
     display: flex;
-
     align-items: flex-end;
 
-    gap: 10px;
+    gap: 12px;
 
-    padding:
-        12px 14px;
+    padding: 16px;
 
-    background: var(--xavia-header);
+    background: #131826;
 
-    border-top:
-        1px solid var(--xavia-border);
+    border-top: 1px solid var(--xavia-border);
 }
 
-
 /* ==========================================================
-   TEXT INPUT
+   INPUT
    ========================================================== */
 
 #xavia-input {
-    flex: 1 1 auto;
-
-    min-width: 0;
+    flex: 1;
 
     width: 100%;
 
-    min-height: 48px;
-    max-height: 110px;
-
+    border: none;
+    outline: none;
     resize: none;
 
-    border:
-        1px solid transparent;
+    border-radius: 12px;
 
-    outline: none;
+    padding: 12px;
 
-    border-radius: 14px;
+    background: #202A3F;
 
-    padding:
-        12px 14px;
+    color: #fff;
 
-    background: var(--xavia-input);
-
-    color: #ffffff;
-
-    font-size: 15px;
-
-    line-height: 1.45;
+    min-height: 48px;
+    max-height: 120px;
 
     overflow-y: auto;
 
-    transition:
-        border var(--xavia-transition),
-        box-shadow var(--xavia-transition);
+    font-size: 14px;
+
+    line-height: 1.45;
 }
 
 #xavia-input::placeholder {
-    color: #98A6BE;
-
-    opacity: 1;
+    color: #8993A5;
 }
 
 #xavia-input:focus {
-    border-color: var(--xavia-primary);
-
     box-shadow:
-        0 0 0 2px rgba(232, 98, 44, 0.12);
+        0 0 0 1px rgba(232, 98, 44, .35);
 }
-
 
 /* ==========================================================
    SEND BUTTON
    ========================================================== */
 
 #xavia-send {
-    flex: 0 0 50px;
+    width: 48px;
+    height: 48px;
 
-    width: 50px;
-    height: 50px;
+    flex: 0 0 48px;
 
     border: none;
 
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--xavia-primary),
-            var(--xavia-secondary)
-        );
-
-    color: #ffffff;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
+    border-radius: 12px;
 
     cursor: pointer;
 
-    font-size: 21px;
+    background: linear-gradient(
+        135deg,
+        var(--xavia-primary),
+        var(--xavia-secondary)
+    );
 
-    line-height: 1;
+    color: #fff;
 
-    transition:
-        transform var(--xavia-transition),
-        opacity var(--xavia-transition);
+    font-size: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: var(--xavia-transition);
 }
 
 #xavia-send:hover {
-    transform: scale(1.04);
+    transform: scale(1.05);
 }
 
 #xavia-send:active {
-    transform: scale(0.95);
+    transform: scale(.96);
 }
 
 #xavia-send:disabled {
+    opacity: .55;
     cursor: not-allowed;
-
-    opacity: 0.55;
-
     transform: none;
 }
 
-#xavia-send:focus {
-    outline: none;
-}
-
-
 /* ==========================================================
-   FOOTER
+   POWERED BY FOOTER
    ========================================================== */
 
-#xavia-footer {
+#xavia-powered {
     flex: 0 0 auto;
 
     width: 100%;
 
-    min-height: 42px;
+    padding: 6px 12px 8px;
 
-    padding:
-        8px 12px 11px;
+    background: #131826;
 
-    background: var(--xavia-header);
+    color: #7F899B;
 
-    color: #8492AA;
+    font-size: 10px;
+
+    line-height: 1.2;
 
     text-align: center;
 
-    font-size: 11px;
-
-    line-height: 1.3;
-
-    border-top:
-        0 solid transparent;
+    white-space: nowrap;
 }
 
-#xavia-footer strong {
-    color: #AEBBD2;
-
-    font-weight: 700;
+#xavia-powered strong {
+    color: #AEB6C5;
+    font-weight: 600;
 }
-
 
 /* ==========================================================
-   SCROLLBARS
+   SCROLLBAR
    ========================================================== */
 
-#xavia-messages::-webkit-scrollbar,
-#xavia-input::-webkit-scrollbar {
+#xavia-messages::-webkit-scrollbar {
     width: 6px;
 }
 
-#xavia-messages::-webkit-scrollbar-track,
-#xavia-input::-webkit-scrollbar-track {
+#xavia-messages::-webkit-scrollbar-track {
     background: transparent;
 }
 
-#xavia-messages::-webkit-scrollbar-thumb,
-#xavia-input::-webkit-scrollbar-thumb {
-    background: #4B566D;
+#xavia-messages::-webkit-scrollbar-thumb {
+    background: #444C5D;
 
     border-radius: 20px;
 }
 
-#xavia-messages::-webkit-scrollbar-thumb:hover,
-#xavia-input::-webkit-scrollbar-thumb:hover {
-    background: #657087;
+#xavia-messages::-webkit-scrollbar-thumb:hover {
+    background: #566074;
 }
 
-
-/* ==========================================================
-   ERROR / NOTICE MESSAGE
-   ========================================================== */
-
-.xavia-error {
-    color: #FFD4C8;
+#xavia-input::-webkit-scrollbar {
+    width: 5px;
 }
 
+#xavia-input::-webkit-scrollbar-thumb {
+    background: #444C5D;
+    border-radius: 20px;
+}
 
 /* ==========================================================
-   TABLET
+   MOBILE
    ========================================================== */
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
 
     #xavia-chat {
-        right: 16px;
-        bottom: 88px;
+        right: 0;
+        bottom: 0;
 
-        width: 370px;
+        width: 100vw;
+        max-width: 100vw;
 
-        max-width:
-            calc(100vw - 32px);
+        height: 100dvh;
+        max-height: 100dvh;
 
-        height: 560px;
+        border-radius: 0;
+    }
 
-        max-height:
-            calc(100vh - 105px);
+    #xavia-header {
+        padding:
+            max(14px, env(safe-area-inset-top))
+            16px
+            14px;
+    }
+
+    #xavia-messages {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .bubble {
+        max-width: 88%;
+        font-size: 14px;
+    }
+
+    #xavia-input-area {
+        padding:
+            10px
+            12px
+            max(10px, env(safe-area-inset-bottom));
+    }
+
+    #xavia-input {
+        min-height: 46px;
+        max-height: 100px;
+    }
+
+    #xavia-send {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
     }
 
     #xavia-launcher {
         right: 18px;
         bottom: 18px;
+
+        width: 60px;
+        height: 60px;
     }
 }
-
-
-/* ==========================================================
-   SMALL PHONES
-   ========================================================== */
-
-@media (max-width: 480px) {
-
-    #xavia-chat {
-        right: 8px;
-        bottom: 78px;
-
-        width:
-            calc(100vw - 16px);
-
-        max-width:
-            calc(100vw - 16px);
-
-        height:
-            min(600px, calc(100vh - 90px));
-
-        max-height:
-            calc(100vh - 90px);
-
-        border-radius: 18px;
-    }
-
-    #xavia-header {
-        min-height: 72px;
-
-        padding:
-            11px 12px;
-    }
-
-    #xavia-avatar {
-        width: 42px;
-        height: 42px;
-
-        flex-basis: 42px;
-
-        font-size: 18px;
-    }
-
-    #xavia-business {
-        font-size: 14px;
-    }
-
-    #xavia-status {
-        font-size: 11px;
-    }
-
-    #xavia-messages {
-        padding:
-            14px 11px;
-
-        gap: 10px;
-    }
-
-    .xavia-message .bubble {
-        max-width: 88%;
-
-        padding:
-            10px 12px;
-
-        font-size: 14px;
-    }
-
-    #xavia-input-area {
-        gap: 8px;
-
-        padding:
-            9px;
-    }
-
-    #xavia-input {
-        min-height: 46px;
-
-        max-height: 100px;
-
-        padding:
-            11px 12px;
-
-        font-size: 14px;
-    }
-
-    #xavia-send {
-        flex-basis: 46px;
-
-        width: 46px;
-        height: 46px;
-
-        border-radius: 13px;
-    }
-
-    #xavia-footer {
-        min-height: 38px;
-
-        padding:
-            7px 8px 9px;
-
-        font-size: 10px;
-    }
-
-    #xavia-launcher {
-        width: 58px;
-        height: 58px;
-
-        right: 15px;
-        bottom: 15px;
-
-        font-size: 25px;
-    }
-}
-
 
 /* ==========================================================
    VERY SMALL PHONES
-   Samsung S8 / similar
    ========================================================== */
 
 @media (max-width: 380px) {
 
-    #xavia-chat {
-        right: 4px;
-        bottom: 70px;
-
-        width:
-            calc(100vw - 8px);
-
-        max-width:
-            calc(100vw - 8px);
-
-        height:
-            calc(100vh - 82px);
-
-        max-height:
-            calc(100vh - 82px);
-
-        border-radius: 16px;
-    }
-
     #xavia-header {
-        min-height: 68px;
-
-        padding:
-            9px 10px;
-    }
-
-    #xavia-avatar {
-        width: 38px;
-        height: 38px;
-
-        flex-basis: 38px;
-
-        font-size: 16px;
-    }
-
-    #xavia-business {
-        font-size: 13px;
-    }
-
-    #xavia-status {
-        font-size: 10px;
-    }
-
-    #xavia-close {
-        width: 30px;
-        height: 30px;
-
-        font-size: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     #xavia-messages {
-        padding:
-            11px 8px;
-    }
-
-    .xavia-message .bubble {
-        max-width: 91%;
-
-        font-size: 13px;
-
-        line-height: 1.45;
+        padding: 12px;
     }
 
     #xavia-input-area {
-        padding:
-            7px;
+        gap: 8px;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
-    #xavia-input {
-        min-height: 44px;
-
-        font-size: 13px;
-    }
-
-    #xavia-send {
-        flex-basis: 44px;
-
-        width: 44px;
-        height: 44px;
-    }
-
-    #xavia-footer {
-        min-height: 35px;
-
-        font-size: 9px;
-    }
-
-    #xavia-launcher {
-        width: 54px;
-        height: 54px;
-
-        right: 12px;
-        bottom: 12px;
+    .bubble {
+        max-width: 91%;
     }
 }
-
 
 /* ==========================================================
    REDUCED MOTION
@@ -985,15 +620,12 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    #xavia-chat,
-    #xavia-launcher,
-    #xavia-send,
-    #xavia-close,
-    #xavia-input {
-        transition: none !important;
-    }
+    #xavia-widget *,
+    #xavia-widget *::before,
+    #xavia-widget *::after {
 
-    .typing span {
         animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
     }
 }
