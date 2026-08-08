@@ -2,12 +2,13 @@
  * ============================================================
  * Xavia Widget UI
  * ============================================================
- * Responsible only for rendering the interface.
- * No backend communication belongs here.
+ * Responsible ONLY for rendering and controlling the interface.
+ * No backend/API calls belong here.
  * ============================================================
  */
 
 import { formatTime } from "./utils.js";
+
 
 export class XaviaUI {
 
@@ -58,46 +59,65 @@ export class XaviaUI {
                 type="button"
                 aria-label="Open Xavia chat"
             >
-                💬
+                <span>💬</span>
             </button>
 
 
-            <!-- Chat -->
+            <!-- Chat Window -->
 
-            <section
+            <div
                 id="xavia-chat"
-                aria-label="Xavia AI chat"
+                role="dialog"
+                aria-label="Xavia chat"
+                aria-hidden="true"
             >
-
 
                 <!-- Header -->
 
                 <div id="xavia-header">
 
-                    <div id="xavia-avatar">
+                    <div
+                        id="xavia-avatar"
+                        aria-hidden="true"
+                    >
                         ${this.config.avatar || "X"}
                     </div>
 
-                    <div>
+
+                    <div id="xavia-header-info">
 
                         <div id="xavia-business">
-                            ${this.config.businessName}
+                            ${this.config.businessName || "Xavia AI"}
                         </div>
 
                         <div id="xavia-status">
-                            ● Xavia is online
+                            <span class="xavia-online-dot">
+                                ●
+                            </span>
+
+                            Xavia is online
                         </div>
 
                     </div>
+
+
+                    <button
+                        id="xavia-close"
+                        type="button"
+                        aria-label="Close chat"
+                    >
+                        ×
+                    </button>
 
                 </div>
 
 
-                <!-- Conversation -->
+                <!-- Messages -->
 
                 <div
                     id="xavia-messages"
                     aria-live="polite"
+                    aria-atomic="false"
                 ></div>
 
 
@@ -107,9 +127,9 @@ export class XaviaUI {
 
                     <textarea
                         id="xavia-input"
-                        rows="1"
                         placeholder="Type your message..."
-                        aria-label="Message Xavia"
+                        rows="1"
+                        aria-label="Message"
                     ></textarea>
 
 
@@ -118,7 +138,9 @@ export class XaviaUI {
                         type="button"
                         aria-label="Send message"
                     >
-                        ➤
+                        <span class="xavia-send-icon">
+                            ➤
+                        </span>
                     </button>
 
                 </div>
@@ -127,14 +149,10 @@ export class XaviaUI {
                 <!-- Footer -->
 
                 <div id="xavia-footer">
-
-                    Powered by
-                    <strong>Konnex AI</strong>
-
+                    Powered by <strong>Konnex AI</strong>
                 </div>
 
-            </section>
-
+            </div>
         `;
 
 
@@ -142,7 +160,7 @@ export class XaviaUI {
 
 
         /*
-         * Cache DOM elements.
+         * Store references to all UI elements.
          */
 
         this.elements = {
@@ -150,71 +168,155 @@ export class XaviaUI {
             root,
 
             launcher:
-                root.querySelector(
-                    "#xavia-launcher"
+                document.getElementById(
+                    "xavia-launcher"
                 ),
 
             chat:
-                root.querySelector(
-                    "#xavia-chat"
+                document.getElementById(
+                    "xavia-chat"
+                ),
+
+            close:
+                document.getElementById(
+                    "xavia-close"
                 ),
 
             messages:
-                root.querySelector(
-                    "#xavia-messages"
+                document.getElementById(
+                    "xavia-messages"
                 ),
 
             input:
-                root.querySelector(
-                    "#xavia-input"
+                document.getElementById(
+                    "xavia-input"
                 ),
 
             send:
-                root.querySelector(
-                    "#xavia-send"
+                document.getElementById(
+                    "xavia-send"
                 ),
 
             business:
-                root.querySelector(
-                    "#xavia-business"
+                document.getElementById(
+                    "xavia-business"
                 ),
 
             avatar:
-                root.querySelector(
-                    "#xavia-avatar"
+                document.getElementById(
+                    "xavia-avatar"
                 )
 
         };
+
+
+        /*
+         * Make sure the input starts at the
+         * correct height.
+         */
+
+        this.resizeInput();
 
     }
 
 
     /**
      * ========================================================
-     * TOGGLE CHAT
+     * OPEN / CLOSE / TOGGLE
      * ========================================================
      */
 
     toggle() {
 
-        this.elements.chat
-            .classList
-            .toggle("open");
+        if (
+            !this.elements.chat
+        ) {
+
+            return;
+
+        }
 
 
         const isOpen =
-            this.elements.chat
-                .classList
-                .contains("open");
+            this.elements.chat.classList.toggle(
+                "open"
+            );
+
+
+        this.elements.chat.setAttribute(
+            "aria-hidden",
+            String(!isOpen)
+        );
 
 
         if (isOpen) {
 
+            /*
+             * Focus input when chat opens.
+             */
+
             setTimeout(() => {
 
-                this.elements.input.focus();
+                if (this.elements.input) {
 
-            }, 200);
+                    this.elements.input.focus();
+
+                }
+
+            }, 100);
+
+        }
+
+    }
+
+
+    close() {
+
+        if (
+            !this.elements.chat
+        ) {
+
+            return;
+
+        }
+
+
+        this.elements.chat.classList.remove(
+            "open"
+        );
+
+
+        this.elements.chat.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    /**
+     * ========================================================
+     * BUSINESS INFORMATION
+     * ========================================================
+     */
+
+    setBusiness(data = {}) {
+
+        if (this.elements.business) {
+
+            this.elements.business.textContent =
+                data.businessName ||
+                data.name ||
+                "Xavia AI";
+
+        }
+
+
+        if (this.elements.avatar) {
+
+            this.elements.avatar.textContent =
+                data.avatar ||
+                "X";
 
         }
 
@@ -223,24 +325,24 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * SET BUSINESS
+     * CHECK WHETHER MESSAGES EXIST
      * ========================================================
      */
 
-    setBusiness(data) {
+    hasMessages() {
 
-        if (data.name) {
+        if (
+            !this.elements.messages
+        ) {
 
-            this.elements.business
-                .textContent =
-                data.name;
+            return false;
 
         }
 
 
-        this.elements.avatar
-            .textContent =
-            data.avatar || "X";
+        return (
+            this.elements.messages.children.length > 0
+        );
 
     }
 
@@ -253,6 +355,15 @@ export class XaviaUI {
 
     addMessage(role, text) {
 
+        if (
+            !this.elements.messages
+        ) {
+
+            return;
+
+        }
+
+
         const message =
             document.createElement("div");
 
@@ -261,17 +372,16 @@ export class XaviaUI {
             `xavia-message ${role}`;
 
 
+        /*
+         * Use textContent rather than innerHTML
+         * so user/AI messages cannot inject HTML.
+         */
+
         const bubble =
             document.createElement("div");
 
-
         bubble.className =
             "bubble";
-
-
-        /*
-         * textContent prevents HTML injection.
-         */
 
         bubble.textContent =
             text;
@@ -280,10 +390,8 @@ export class XaviaUI {
         const time =
             document.createElement("div");
 
-
         time.className =
             "time";
-
 
         time.textContent =
             formatTime();
@@ -292,7 +400,6 @@ export class XaviaUI {
         message.appendChild(
             bubble
         );
-
 
         message.appendChild(
             time
@@ -317,24 +424,36 @@ export class XaviaUI {
 
     showTyping() {
 
-        this.hideTyping();
+        /*
+         * Don't create multiple typing indicators.
+         */
+
+        if (
+            document.getElementById(
+                "xavia-typing"
+            )
+        ) {
+
+            return;
+
+        }
 
 
-        const message =
+        const typing =
             document.createElement("div");
 
 
-        message.id =
-            "xavia-typing";
-
-
-        message.className =
+        typing.className =
             "xavia-message bot";
 
 
-        message.innerHTML = `
+        typing.id =
+            "xavia-typing";
 
-            <div class="xavia-typing-bubble">
+
+        typing.innerHTML = `
+
+            <div class="bubble typing">
 
                 <span></span>
                 <span></span>
@@ -346,7 +465,7 @@ export class XaviaUI {
 
 
         this.elements.messages.appendChild(
-            message
+            typing
         );
 
 
@@ -357,7 +476,7 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * HIDE TYPING
+     * HIDE TYPING INDICATOR
      * ========================================================
      */
 
@@ -380,7 +499,7 @@ export class XaviaUI {
 
     /**
      * ========================================================
-     * ERROR
+     * ERROR MESSAGE
      * ========================================================
      */
 
@@ -402,54 +521,148 @@ export class XaviaUI {
 
     clearInput() {
 
-        this.elements.input.value = "";
+        if (
+            !this.elements.input
+        ) {
 
-        this.autoResizeInput();
+            return;
+
+        }
+
+
+        this.elements.input.value =
+            "";
+
+
+        this.resizeInput();
 
     }
 
 
     /**
      * ========================================================
-     * AUTO RESIZE INPUT
+     * RESIZE TEXTAREA
      * ========================================================
      */
 
-    autoResizeInput() {
+    resizeInput() {
 
         const input =
             this.elements.input;
 
 
+        if (!input) {
+
+            return;
+
+        }
+
+
+        /*
+         * Reset first so scrollHeight is accurate.
+         */
+
         input.style.height =
             "auto";
 
 
-        input.style.height =
+        const height =
             Math.min(
                 input.scrollHeight,
                 120
-            ) + "px";
+            );
+
+
+        input.style.height =
+            `${height}px`;
 
     }
 
 
     /**
      * ========================================================
-     * SCROLL TO BOTTOM
+     * SENDING STATE
+     * ========================================================
+     */
+
+    setSending(isSending) {
+
+        if (
+            !this.elements.send ||
+            !this.elements.input
+        ) {
+
+            return;
+
+        }
+
+
+        this.elements.send.disabled =
+            isSending;
+
+
+        this.elements.input.disabled =
+            isSending;
+
+
+        if (isSending) {
+
+            this.elements.send.classList.add(
+                "sending"
+            );
+
+        }
+
+        else {
+
+            this.elements.send.classList.remove(
+                "sending"
+            );
+
+            /*
+             * Return focus to the input after
+             * the request finishes.
+             */
+
+            setTimeout(() => {
+
+                if (this.elements.input) {
+
+                    this.elements.input.disabled =
+                        false;
+
+                    this.elements.input.focus();
+
+                }
+
+            }, 50);
+
+        }
+
+    }
+
+
+    /**
+     * ========================================================
+     * AUTO SCROLL
      * ========================================================
      */
 
     scrollBottom() {
 
-        const messages =
-            this.elements.messages;
+        if (
+            !this.elements.messages
+        ) {
+
+            return;
+
+        }
 
 
         requestAnimationFrame(() => {
 
-            messages.scrollTop =
-                messages.scrollHeight;
+            this.elements.messages.scrollTop =
+                this.elements.messages.scrollHeight;
 
         });
 
